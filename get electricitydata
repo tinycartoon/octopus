@@ -1,0 +1,64 @@
+#Connecting to the Octopus Energy API requires making HTTP requests to their endpoints. Below, I'll provide an example of how you can use Python and the `requests` library to connect to their API and fetch data. Please note that the Octopus Energy API documentation might change over time, so I'll provide a generic example based on the information available as of my last update in September 2021. You may need to refer to their updated API documentation for the most recent information.
+
+#First, make sure you have the `requests` library installed. You can install it using `pip` if you haven't already:
+
+```bash
+pip install requests
+```
+
+#Now, let's create a Python script to connect to the Octopus Energy API:
+
+```python
+import requests
+
+API_BASE_URL = "https://api.octopus.energy/v1/"
+API_KEY = "your_api_key_here"  # Replace this with your actual API key
+
+# Function to make a GET request to the API
+def make_api_get_request(endpoint, params=None):
+    headers = {
+        "Authorization": f"Basic {API_KEY}",
+    }
+    response = requests.get(API_BASE_URL + endpoint, headers=headers, params=params)
+    response.raise_for_status()  # Raise an exception for 4xx and 5xx status codes
+    return response.json()
+
+# Example function to get a list of electricity tariffs
+def get_electricity_tariffs():
+    endpoint = "products/elec-tariffs/"
+    return make_api_get_request(endpoint)
+
+# Example function to get consumption data for a specific meter point
+def get_consumption_data(meter_point_id, from_date, to_date):
+    endpoint = f"consumption/{meter_point_id}/"
+    params = {
+        "from": from_date,
+        "to": to_date,
+    }
+    return make_api_get_request(endpoint, params=params)
+
+if __name__ == "__main__":
+    # Example usage:
+    try:
+        # Get a list of electricity tariffs
+        tariffs = get_electricity_tariffs()
+        print("Electricity Tariffs:")
+        print(tariffs)
+
+        # Get consumption data for a specific meter point
+        meter_point_id = "your_meter_point_id_here"
+        from_date = "2023-01-01"
+        to_date = "2023-01-31"
+        consumption_data = get_consumption_data(meter_point_id, from_date, to_date)
+        print(f"Consumption Data for Meter Point {meter_point_id}:")
+        print(consumption_data)
+
+    except requests.exceptions.RequestException as e:
+        print("Error making API request:", e)
+```
+
+#In the code above, you'll need to replace `'your_api_key_here'` with your actual Octopus Energy API key. Additionally, you'll need to replace `'your_meter_point_id_here'` with the ID of the meter point you want to fetch consumption data for.
+
+#Keep in mind that the specific endpoints and data you can retrieve will depend on the type of data available through the API and the access level provided by your API key.
+
+#Please make sure to check the Octopus Energy API documentation for the most up-to-date information and any potential changes in the API usage.
